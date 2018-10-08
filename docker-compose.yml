@@ -1,0 +1,28 @@
+version: "3.1"
+services:
+
+    mariadb:
+      image: mariadb:10.1
+      container_name: smileco-mariadb
+      working_dir: /application
+      volumes:
+        - .:/application
+        - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      environment:
+        - MYSQL_ROOT_PASSWORD=pass
+        - MYSQL_DATABASE=familytree
+        - MYSQL_USER=deploy
+        - MYSQL_PASSWORD=pass
+      ports:
+        - "8083:3306"
+
+    webserver:
+      image: smileco
+      container_name: smileco-webserver
+      working_dir: /application
+      depends_on:
+          - "mariadb"
+      volumes:
+          - .:/application
+      ports:
+       - "8080:8080"
